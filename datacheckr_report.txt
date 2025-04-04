@@ -1,0 +1,28 @@
+Running datacheckr on your DataFrame...
+
+⚠️  Column 'name' has 1 missing values (25.0%)
+⚠️  Column 'age' has 1 missing values (25.0%)
+✅ Column 'city' has no missing values.
+
+✅ No duplicate rows found.
+
+✅ Column 'name' has 2 unique values.
+✅ Column 'city' has 2 unique values.
+
+✅ Column 'age' has no strong outliers
+
+📊 Column Summary:
+🧾 'name': dtype=object, missing=25.0%, unique=2
+🧾 'age': dtype=float64, missing=25.0%, unique=2
+🧾 'city': dtype=object, missing=0.0%, unique=2
+
+📐 Schema Validation:
+✅ Column 'name' matches expected type 'object'
+⚠️  Column 'age' has dtype 'float64', expected 'int64'
+✅ Column 'city' matches expected type 'object'
+❌ Column 'joined_date' is missing from DataFrame.
+
+🛠 Auto-Fix Suggestions:
+🛠 Suggestion: Fill 1 missing in 'name' with 'Bob'
+🛠 Suggestion: Fill 1 missing in 'age' with '26.666666666666668'
+🛠 Suggestion: Convert 'age' to int64
