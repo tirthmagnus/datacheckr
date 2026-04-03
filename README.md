@@ -1,59 +1,69 @@
-# 🧪 Datacheckr
+# 🔍 Datacheckr
 
-**datacheckr** is a lightweight, developer-friendly Python package for performing fast, flexible, and professional-grade validation on `pandas` DataFrames.
+> **Production-grade Python data quality package** — plugs into any ETL pipeline to catch schema drift, null trends, and aggregate mismatches before they corrupt downstream BI reports or ML models.
 
-It detects common data quality issues like missing values, duplicates, outliers, and schema mismatches — and even suggests smart fixes. Perfect for analysts, engineers, and QA teams.
-
----
-
-## 🚀 Features
-
-- ✅ Detect missing values and calculate % per column  
-- ✅ Identify duplicate rows  
-- ✅ Flag noisy categorical columns (too many unique values)  
-- ✅ Detect outliers using z-scores  
-- ✅ Validate schema (expected columns and data types)  
-- ✅ Summarize each column (dtype, % missing, unique count)  
-- ✅ Suggest intelligent auto-fixes (fill nulls, convert types, drop dupes)  
-- ✅ Save report to `.txt` for sharing or documentation  
-- ✅ Easily embeddable in pipelines or Jupyter notebooks
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?logo=python&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-Data%20Validation-150458?logo=pandas&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 
 ---
 
-## 📦 Installation
+## 🧭 Why Datacheckr?
 
-Clone the repository:
+In regulated industries like **financial services** and **insurance**, a single bad data load can trigger compliance failures, corrupt dashboards, or silently break ML models. Standard ETL pipelines have no built-in quality gate.
 
-```bash
-git clone https://github.com/yourusername/datacheckr.git
-cd datacheckr
+**Datacheckr** solves this by acting as an automated validation layer between your raw data source and your data warehouse — catching issues *before* they reach production.
+```
+Data Source → Extract → [Datacheckr Gate] → Transform → Load → BI / ML
+                              ↓ FAIL
+                        Alert + Pipeline Halt
+                        (bad data never reaches warehouse)
 ```
 
 ---
 
-## 🧑‍💻 Usage
+## ✅ What It Detects
 
+| Check | Description |
+|---|---|
+| 🔴 Missing Values | Detects nulls per column with % breakdown |
+| 🔴 Duplicate Rows | Flags exact and near-duplicate records |
+| 🟡 Schema Drift | Catches added, dropped, or retyped columns vs baseline |
+| 🟡 Outliers | Z-score based anomaly detection per numeric column |
+| 🟡 Low Variance | Flags columns with dominant single values (>90% one category) |
+| 🟢 Type Validation | Validates dtypes against expected schema |
+| 🟢 Auto-Fix Suggestions | Recommends fill strategy, type conversions, dedup actions |
+
+---
+
+## 📦 Installation
+```bash
+git clone https://github.com/tirthmagnus/datacheckr.git
+cd datacheckr
+pip install pandas numpy
+```
+
+---
+
+## 🚀 Quick Start
 ```python
 from datacheckr.validator import validate
 import pandas as pd
 
-# Sample data
-data = {
-    'name': ['Alice', 'Bob', None, 'Bob'],
-    'age': [25, None, 30, 25],
-    'city': ['NY', 'LA', 'LA', 'NY']
-}
-df = pd.DataFrame(data)
+df = pd.DataFrame({
+    'customer_id': [101, 102, None, 102],
+    'revenue':     [5000, None, 3200, 5000],
+    'segment':     ['SMB', 'Enterprise', 'SMB', 'SMB']
+})
 
-# Optional: Define expected schema
 expected_schema = {
-    'name': 'object',
-    'age': 'int64',
-    'city': 'object',
+    'customer_id': 'int64',
+    'revenue':     'float64',
+    'segment':     'object',
     'joined_date': 'datetime64[ns]'
 }
 
-# Run datacheckr
 validate(
     df,
     expected_schema=expected_schema,
@@ -62,61 +72,68 @@ validate(
 )
 ```
 
-> This will print a full validation report in the terminal and save it to `datacheckr_report.txt`.
-
 ---
 
 ## 📊 Example Output
-
 ```
 Running datacheckr on your DataFrame...
 
-⚠️  Column 'name' has 1 missing values (25.0%)
-❌ DataFrame has 1 duplicate rows.
-⚠️  Column 'status' has 91% value 'active' — low variance
-✅ Column 'age' has no strong outliers
-📐 Column 'joined_date' is missing from DataFrame
-🛠 Suggestion: Fill 'name' with most common value 'Bob'
-🛠 Suggestion: Drop 1 duplicate row
-🛠 Suggestion: Convert 'age' to 'int64'
+⚠️  Column 'customer_id' has 1 missing value (25.0%)
+⚠️  Column 'revenue' has 1 missing value (25.0%)
+❌  DataFrame has 1 duplicate row
+📐  Column 'joined_date' missing from DataFrame — schema drift detected
+🛠  Suggestion: Fill 'customer_id' with mode value 102
+🛠  Suggestion: Fill 'revenue' with median value 4100.0
+🛠  Suggestion: Drop 1 duplicate row
+🛠  Suggestion: Convert 'customer_id' to int64
+
+Report saved → datacheckr_report.txt
 ```
 
 ---
 
-## 📂 Folder Structure
-
+## 📂 Project Structure
 ```
 datacheckr/
 ├── datacheckr/
 │   ├── __init__.py
 │   └── validator.py
 ├── tester.py
+├── datacheckr_report.txt
 └── README.md
 ```
 
 ---
 
-## 📌 Roadmap
+## 🏭 Real-World Applications
 
-- [ ] Export to `.xlsx` or styled HTML  
-- [ ] Add `apply_fixes=True` mode (with logs)  
-- [ ] Streamlit-based visual UI  
-- [ ] CLI usage: `python -m datacheckr file.csv`  
-- [ ] GitHub Actions integration  
+- **Financial data pipelines** — catch null account IDs before P&L reports run
+- **CRM integrations** — validate lead data before uploading to dialer or CRM
+- **Insurance data compliance** — enforce schema contracts between source systems and warehouse
+- **ML feature pipelines** — prevent silent data corruption from reaching model training
+
+> 💡 Inspired by production data quality work at **ClearBizDebt** and **ISR Info Way**.
 
 ---
 
-## 🤝 Contributing
+## 🗺️ Roadmap
 
-Pull requests are welcome!  
-If you’ve got a cool check idea or enhancement, submit an issue or PR. Let’s make `datacheckr` smarter together.
+- [ ] Export reports to `.xlsx` or styled HTML
+- [ ] `apply_fixes=True` mode with full audit log
+- [ ] Streamlit-based visual dashboard UI
+- [ ] CLI: `python -m datacheckr file.csv`
+- [ ] GitHub Actions integration for CI/CD pipelines
+
+---
+
+## 👤 Author
+
+**Tirth Bhatt** — BI & Data Engineer
+📍 New Jersey, USA
+🔗 [LinkedIn](https://www.linkedin.com/in/tirthrajbhatt) · [Portfolio](https://tirthmagnus.github.io/) · [GitHub](https://github.com/tirthmagnus)
 
 ---
 
 ## 📄 License
 
 MIT License
-
----
----
-Built with ❤️ by [Tirth Bhatt](https://github.com/tirthmagnus)
